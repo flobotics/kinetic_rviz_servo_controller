@@ -36,9 +36,10 @@
 #include <QLabel>
 #include <QTimer>
 #include <QPushButton>
+//#include <QChartView>
 
 #include <geometry_msgs/Twist.h>
-#include <dynamixel_msgs/JointState.h>
+//#include <dynamixel_msgs/JointState.h>
 #include <std_msgs/Float64.h>
 
 //#include "drive_widget.h"
@@ -68,10 +69,10 @@ TeleopPanel::TeleopPanel( QWidget* parent )
   // QLabel and a QLineEdit in a QHBoxLayout.
   //QHBoxLayout* topic_layout = new QHBoxLayout;
   //topic_box_ = new rviz::RosTopicProperty(
-   //   "adc Topic", "adc_plus_pi_pub",
-   //   ros::message_traits::datatype<std_msgs::Float32MultiArray>(),
-   //   "dynamixel_msgs/JointState topic to subscribe to.",
-   //   this, SLOT(updateTopic()));  
+  //    "Topic", "",
+  //    ros::message_traits::datatype<dynamixel_msgs/JointState_>(),
+  //    "dynamixel_msgs/JointState topic to subscribe to.",
+  //    this, SLOT(updateTopic()));  
 
   //topic_box_ = new rviz::RosTopicProperty("Topic","","","","",this, SLOT(updateTopic()));
 
@@ -80,6 +81,9 @@ TeleopPanel::TeleopPanel( QWidget* parent )
   //topic_layout->addWidget( new QLabel( "Output Topic:" ));
   //output_topic_editor_ = new QLineEdit;
   //topic_layout->addWidget( output_topic_editor_ );
+
+  //QHBoxLayout* chart_layout = new QHBoxLayout;
+  //load_chart_ = new QChart();
 
   QHBoxLayout* servoctrl1_layout = new QHBoxLayout;
   servo1pos_ = new QPushButton("s1 pos");
@@ -206,8 +210,14 @@ TeleopPanel::TeleopPanel( QWidget* parent )
 
   // Make the control widget start disabled, since we don't start with an output topic.
   //drive_widget_->setEnabled( false );
+
+  ax12_sub_ = nh_.subscribe < dynamixel_msgs::JointState > ("/proximal1_1_controller/state", 5, &TeleopPanel::ax12Callback, this);
 }
 
+void TeleopPanel::ax12Callback(const dynamixel_msgs::JointState::ConstPtr & pose) 
+{
+	printf("heello");
+}
 void TeleopPanel::stop_servo1()
 {
   if( ros::ok() && s1_publisher_ )
@@ -444,7 +454,7 @@ void TeleopPanel::send_s4neg()
 
 void TeleopPanel::send_s5pos()
 {
-  s5_publisher_ = nh_.advertise<std_msgs::Float64>("/proximal1_1_controller/command",1);
+  s5_publisher_ = nh_.advertise<std_msgs::Float64>("/intermediate1_controller/command",1);
 
   if( ros::ok() && s5_publisher_ )
   {
@@ -457,7 +467,7 @@ void TeleopPanel::send_s5pos()
 
 void TeleopPanel::send_s5neg()
 {
-  s5_publisher_ = nh_.advertise<std_msgs::Float64>("/proximal1_1_controller/command",1);
+  s5_publisher_ = nh_.advertise<std_msgs::Float64>("/intermediate1_controller/command",1);
 
   if( ros::ok() && s5_publisher_ )
   {
@@ -468,7 +478,7 @@ void TeleopPanel::send_s5neg()
 }
 void TeleopPanel::send_s6pos()
 {
-  s6_publisher_ = nh_.advertise<std_msgs::Float64>("/proximal1_1_controller/command",1);
+  s6_publisher_ = nh_.advertise<std_msgs::Float64>("/intermediate2_controller/command",1);
 
   if( ros::ok() && s6_publisher_ )
   {
@@ -481,7 +491,7 @@ void TeleopPanel::send_s6pos()
 
 void TeleopPanel::send_s6neg()
 {
-  s6_publisher_ = nh_.advertise<std_msgs::Float64>("/proximal1_1_controller/command",1);
+  s6_publisher_ = nh_.advertise<std_msgs::Float64>("/intermediate2_controller/command",1);
 
   if( ros::ok() && s6_publisher_ )
   {
@@ -492,7 +502,7 @@ void TeleopPanel::send_s6neg()
 }
 void TeleopPanel::send_s7pos()
 {
-  s7_publisher_ = nh_.advertise<std_msgs::Float64>("/proximal1_1_controller/command",1);
+  s7_publisher_ = nh_.advertise<std_msgs::Float64>("/distal1_controller/command",1);
 
   if( ros::ok() && s7_publisher_ )
   {
@@ -505,7 +515,7 @@ void TeleopPanel::send_s7pos()
 
 void TeleopPanel::send_s7neg()
 {
-  s7_publisher_ = nh_.advertise<std_msgs::Float64>("/proximal1_1_controller/command",1);
+  s7_publisher_ = nh_.advertise<std_msgs::Float64>("/distal1_controller/command",1);
 
   if( ros::ok() && s7_publisher_ )
   {
@@ -516,7 +526,7 @@ void TeleopPanel::send_s7neg()
 }
 void TeleopPanel::send_s8pos()
 {
-  s8_publisher_ = nh_.advertise<std_msgs::Float64>("/proximal1_1_controller/command",1);
+  s8_publisher_ = nh_.advertise<std_msgs::Float64>("/distal2_controller/command",1);
 
   if( ros::ok() && s8_publisher_ )
   {
@@ -529,7 +539,7 @@ void TeleopPanel::send_s8pos()
 
 void TeleopPanel::send_s8neg()
 {
-  s8_publisher_ = nh_.advertise<std_msgs::Float64>("/proximal1_1_controller/command",1);
+  s8_publisher_ = nh_.advertise<std_msgs::Float64>("/distal2_controller/command",1);
 
   if( ros::ok() && s8_publisher_ )
   {

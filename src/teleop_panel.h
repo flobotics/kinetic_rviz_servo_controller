@@ -35,6 +35,7 @@
 # include <rviz/panel.h>
 
 #include <rviz/properties/ros_topic_property.h>
+#include <dynamixel_msgs/JointState.h>
 #endif
 
 class QLineEdit;
@@ -126,6 +127,8 @@ protected Q_SLOTS:
   // setTopic() with the result.
   void updateTopic();
 
+  void ax12Callback(const dynamixel_msgs::JointState::ConstPtr & pose);
+
   // Then we finish up with protected member variables.
 protected:
   // The control-area widget which turns mouse events into command
@@ -139,6 +142,8 @@ protected:
   QString output_topic_;
 
   rviz::RosTopicProperty* topic_box_;
+
+  //QChart *load_chart_;
 
   //positive and negative direction of servo1
   QPushButton* servo1pos_;
@@ -177,6 +182,8 @@ protected:
 
   // The ROS node handle.
   ros::NodeHandle nh_;
+
+  ros::Subscriber ax12_sub_;
 
   // The latest velocity values from the drive widget.
   float linear_velocity_;
